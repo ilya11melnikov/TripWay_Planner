@@ -1,0 +1,53 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.searchBar {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.inputWrapper {
+  position: relative;
+  @include flex-center;
+}
+
+.input {
+  width: 100%;
+  padding: $spacing-md $spacing-xl $spacing-md $spacing-lg;
+  border: 2px solid var(--border);
+  border-radius: $radius-xl;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+  
+  &::placeholder {
+    color: var(--text-secondary);
+  }
+}
+
+.button {
+  position: absolute;
+  right: $spacing-sm;
+  background: $primary-color;
+  border: none;
+  border-radius: $radius-md;
+  padding: $spacing-sm $spacing-md;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  @include flex-center;
+  
+  &:hover {
+    background: darken($primary-color, 10%);
+    transform: scale(1.1);
+  }
+}
+

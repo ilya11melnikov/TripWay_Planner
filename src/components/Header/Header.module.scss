@@ -1,0 +1,128 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  box-shadow: $shadow-sm;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.container {
+  @include container;
+  @include flex-between;
+  padding-top: $spacing-md;
+  padding-bottom: $spacing-md;
+  gap: $spacing-lg;
+  
+  @include responsive($breakpoint-md) {
+    flex-wrap: wrap;
+    gap: $spacing-md;
+  }
+}
+
+.logo {
+  @include flex-center;
+  gap: $spacing-sm;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: $primary-color;
+  cursor: pointer;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.logoIcon {
+  font-size: 2rem;
+}
+
+.logoText {
+  @include responsive($breakpoint-sm) {
+    display: none;
+  }
+}
+
+.nav {
+  @include flex-center;
+  gap: $spacing-lg;
+  flex: 1;
+  justify-content: center;
+  
+  @include responsive($breakpoint-md) {
+    order: 3;
+    width: 100%;
+    gap: $spacing-md;
+  }
+}
+
+.navLink {
+  position: relative;
+  padding: $spacing-sm $spacing-md;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+  @include flex-center;
+  gap: $spacing-sm;
+  
+  &:hover {
+    color: var(--text-primary);
+  }
+  
+  &.active {
+    color: $primary-color;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -$spacing-md;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 2px;
+      background: $primary-color;
+    }
+  }
+}
+
+.badge {
+  background: $accent-color;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  @include flex-center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.actions {
+  @include flex-center;
+  gap: $spacing-md;
+}
+
+.themeToggle {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: $radius-md;
+  padding: $spacing-sm;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: var(--bg-secondary);
+    transform: rotate(15deg);
+  }
+}
+
+

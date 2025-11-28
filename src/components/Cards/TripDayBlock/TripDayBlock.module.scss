@@ -1,0 +1,45 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/mixins.scss';
+
+.dayBlock {
+  @include card;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-xl;
+  min-height: 200px;
+  border: 2px solid var(--border);
+  transition: all 0.3s ease;
+  
+  &.isOver {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
+  }
+}
+
+.dayTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: $spacing-lg;
+  color: $primary-color;
+  padding-bottom: $spacing-md;
+  border-bottom: 2px solid var(--border);
+}
+
+.items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: $spacing-md;
+  
+  @include responsive($breakpoint-md) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+.empty {
+  padding: $spacing-xl;
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  border: 2px dashed var(--border);
+  border-radius: $radius-md;
+}
+

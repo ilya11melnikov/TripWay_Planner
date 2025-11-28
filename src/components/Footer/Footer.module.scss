@@ -1,0 +1,70 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.footer {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  margin-top: $spacing-2xl;
+  padding: $spacing-xl 0;
+}
+
+.container {
+  @include container;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-xl;
+  margin-bottom: $spacing-xl;
+}
+
+.section {
+  h3, h4 {
+    margin-bottom: $spacing-md;
+    color: var(--text-primary);
+  }
+}
+
+.title {
+  font-size: 1.5rem;
+  color: $primary-color;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  margin-bottom: $spacing-md;
+}
+
+.description,
+.text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  
+  a {
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+.bottom {
+  padding-top: $spacing-lg;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.copyright {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+

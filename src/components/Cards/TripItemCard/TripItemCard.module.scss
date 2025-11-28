@@ -1,0 +1,74 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/mixins.scss';
+
+.card {
+  @include card;
+  cursor: move;
+  margin-bottom: $spacing-md;
+  position: relative;
+  transition: all 0.3s ease;
+  
+  &.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+}
+
+.link {
+  display: block;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 60%;
+  overflow: hidden;
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.removeBtn {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  background: rgba(white, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  @include flex-center;
+  font-size: 1rem;
+  color: $error-color;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  
+  &:hover {
+    background: white;
+    transform: scale(1.1);
+  }
+}
+
+.content {
+  padding: $spacing-md;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: $spacing-xs;
+  color: var(--text-primary);
+}
+
+.address {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+

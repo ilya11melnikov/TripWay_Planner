@@ -1,0 +1,98 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.tripPlan {
+  min-height: calc(100vh - 80px);
+  padding: $spacing-xl 0;
+}
+
+.header {
+  @include container;
+  text-align: center;
+  margin-bottom: $spacing-2xl;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: $spacing-md;
+  color: var(--text-primary);
+  
+  @include responsive($breakpoint-md) {
+    font-size: 2rem;
+  }
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  
+  @include responsive($breakpoint-md) {
+    font-size: 1rem;
+  }
+}
+
+.daysContainer {
+  @include container;
+}
+
+.empty {
+  min-height: calc(100vh - 200px);
+  @include flex-center;
+}
+
+.emptyContent {
+  text-align: center;
+  max-width: 600px;
+  padding: $spacing-2xl;
+  
+  h2 {
+    font-size: 2rem;
+    margin-bottom: $spacing-md;
+    color: var(--text-primary);
+  }
+  
+  p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: $spacing-md;
+  }
+}
+
+.hint {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  padding: $spacing-lg;
+  background: var(--bg-card);
+  border-radius: $radius-lg;
+  border: 1px dashed var(--border);
+}
+
+.help {
+  @include container;
+  margin-top: $spacing-2xl;
+  padding: $spacing-xl;
+  background: var(--bg-card);
+  border-radius: $radius-lg;
+  border: 1px solid var(--border);
+  
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: $spacing-md;
+    color: var(--text-primary);
+  }
+  
+  ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    
+    li {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      padding-left: $spacing-lg;
+    }
+  }
+}
+
