@@ -8,21 +8,12 @@ import { ThemeProvider } from './context/ThemeContext';
 import { TripProvider } from './context/TripContext';
 import './styles/global.scss';
 
-// Получаем basename из package.json homepage или используем process.env.PUBLIC_URL
+// Получаем basename из process.env.PUBLIC_URL (устанавливается автоматически из homepage в package.json)
 const getBasename = () => {
-  // В production используем homepage из package.json
-  // В development это будет пустая строка
-  if (process.env.NODE_ENV === 'production') {
-    try {
-      const packageJson = require('../package.json');
-      const homepage = packageJson.homepage || '/';
-      // Убираем trailing slash и возвращаем путь
-      return homepage === '/' ? '' : homepage.replace(/\/$/, '');
-    } catch (e) {
-      return '';
-    }
-  }
-  return '';
+  // process.env.PUBLIC_URL содержит путь из homepage (например, "/TripWay_Planner" или "")
+  // Убираем trailing slash если есть
+  const publicUrl = process.env.PUBLIC_URL || '';
+  return publicUrl.endsWith('/') ? publicUrl.slice(0, -1) : publicUrl;
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -206,12 +206,16 @@ function updateIndexHtml(cb) {
 	
 	let html = fs.readFileSync(indexPath, 'utf8');
 	
-	// Удаляем старые ссылки на static файлы (минифицированные и обычные)
-	html = html.replace(/<link[^>]*href="\/static\/css\/[^"]*"[^>]*>/g, '');
-	html = html.replace(/<link[^>]*href="\/static\/css\/[^"]*"[^>]*\/>/g, '');
-	html = html.replace(/<script[^>]*src="\/static\/js\/[^"]*"[^>]*><\/script>/g, '');
-	html = html.replace(/<script[^>]*src="\/static\/js\/[^"]*"[^>]*\/>/g, '');
-	html = html.replace(/<script[^>]*defer[^>]*src="\/static\/js\/[^"]*"[^>]*><\/script>/g, '');
+	// Удаляем ВСЕ старые ссылки на static файлы (с basePath и без, минифицированные и обычные)
+	// Более агрессивное удаление - удаляем любые ссылки содержащие /static/
+	html = html.replace(/<link[^>]*href="[^"]*\/static\/[^"]*"[^>]*>/g, '');
+	html = html.replace(/<link[^>]*href="[^"]*\/static\/[^"]*"[^>]*\/>/g, '');
+	html = html.replace(/<script[^>]*src="[^"]*\/static\/[^"]*"[^>]*><\/script>/g, '');
+	html = html.replace(/<script[^>]*src="[^"]*\/static\/[^"]*"[^>]*\/>/g, '');
+	html = html.replace(/<script[^>]*defer[^>]*src="[^"]*\/static\/[^"]*"[^>]*><\/script>/g, '');
+	html = html.replace(/<script[^>]*defer[^>]*src="[^"]*\/static\/[^"]*"[^>]*\/>/g, '');
+	// Также удаляем с любыми другими атрибутами
+	html = html.replace(/<script[^>]*\/static\/[^"]*"[^>]*>/g, '');
 	
 	// Используем относительные пути для совместимости с GitHub Pages
 	// Если homepage не корень, используем basePath, иначе относительные пути
@@ -220,6 +224,11 @@ function updateIndexHtml(cb) {
 	
 	const cssLink = `<link href="${cssPath}" rel="stylesheet">`;
 	const jsScript = `<script src="${jsPath}"></script>`;
+	
+	// Удаляем старые ссылки на наши объединенные файлы если они есть (на случай пересборки)
+	html = html.replace(/<link[^>]*href="[^"]*\/css\/main\.css"[^>]*>/g, '');
+	html = html.replace(/<script[^>]*src="[^"]*\/js\/main\.js"[^>]*><\/script>/g, '');
+	html = html.replace(/<script[^>]*src="[^"]*\/js\/main\.js"[^>]*\/>/g, '');
 	
 	// Вставляем CSS перед закрывающим </head> (работает и с минифицированным HTML)
 	if (!html.includes('css/main.css')) {
