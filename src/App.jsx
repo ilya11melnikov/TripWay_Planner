@@ -19,7 +19,7 @@ function App() {
       <Header />
       <main className={styles.main}>
         <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/search" element={<Search />} />
           <Route path="/item/:id" element={<Details />} />
