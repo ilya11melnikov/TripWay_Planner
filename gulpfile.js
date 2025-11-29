@@ -199,6 +199,11 @@ function updateIndexHtml(cb) {
 		return cb();
 	}
 	
+	// Читаем homepage из package.json для правильных путей
+	const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+	const homepage = packageJson.homepage || '/';
+	const basePath = homepage.endsWith('/') ? homepage : homepage + '/';
+	
 	let html = fs.readFileSync(indexPath, 'utf8');
 	
 	// Удаляем старые ссылки на static файлы (минифицированные и обычные)
@@ -208,9 +213,13 @@ function updateIndexHtml(cb) {
 	html = html.replace(/<script[^>]*src="\/static\/js\/[^"]*"[^>]*\/>/g, '');
 	html = html.replace(/<script[^>]*defer[^>]*src="\/static\/js\/[^"]*"[^>]*><\/script>/g, '');
 	
-	// Добавляем новые ссылки на объединенные файлы
-	const cssLink = '<link href="/css/main.css" rel="stylesheet">';
-	const jsScript = '<script src="/js/main.js"></script>';
+	// Используем относительные пути для совместимости с GitHub Pages
+	// Если homepage не корень, используем basePath, иначе относительные пути
+	const cssPath = homepage === '/' ? './css/main.css' : basePath + 'css/main.css';
+	const jsPath = homepage === '/' ? './js/main.js' : basePath + 'js/main.js';
+	
+	const cssLink = `<link href="${cssPath}" rel="stylesheet">`;
+	const jsScript = `<script src="${jsPath}"></script>`;
 	
 	// Вставляем CSS перед закрывающим </head> (работает и с минифицированным HTML)
 	if (!html.includes('css/main.css')) {
@@ -230,8 +239,14 @@ function updateIndexHtml(cb) {
 		}
 	}
 	
+	// Также обновляем favicon если нужно
+	if (html.includes('href="/favicon.svg"')) {
+		const faviconPath = homepage === '/' ? './favicon.svg' : basePath + 'favicon.svg';
+		html = html.replace('href="/favicon.svg"', `href="${faviconPath}"`);
+	}
+	
 	fs.writeFileSync(indexPath, html, 'utf8');
-	console.log('Updated index.html with combined CSS and JS');
+	console.log(`Updated index.html with combined CSS and JS (basePath: ${basePath})`);
 	cb();
 }
 
