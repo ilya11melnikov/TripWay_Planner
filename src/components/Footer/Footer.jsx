@@ -25,9 +25,9 @@ const Footer = () => {
           </div>
           
           <div className={styles.section}>
-            <h4 className={styles.subtitle}>О проекте</h4>
+            <h4 className={styles.subtitle}>Информация</h4>
             <p className={styles.text}>
-              Использует OpenTripMap API для поиска мест и направлений
+              Откройте для себя удивительные места по всему миру и создайте незабываемое путешествие
             </p>
           </div>
         </div>

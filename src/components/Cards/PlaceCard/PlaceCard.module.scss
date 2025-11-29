@@ -72,6 +72,21 @@
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: capitalize;
+  z-index: 5;
+}
+
+.inTripBadge {
+  position: absolute;
+  top: $spacing-md;
+  left: $spacing-md;
+  background: rgba($success-color, 0.95);
+  color: white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-md;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 10;
+  box-shadow: $shadow-sm;
 }
 
 .content {

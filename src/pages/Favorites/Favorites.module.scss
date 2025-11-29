@@ -1,0 +1,116 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.favorites {
+  min-height: calc(100vh - 80px);
+  padding: $spacing-xl 0;
+}
+
+.backBtn {
+  position: fixed;
+  left: $spacing-lg;
+  top: 90px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: $radius-md;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  @include flex-center;
+  box-shadow: $shadow-md;
+  z-index: 100;
+  
+  @include responsive($breakpoint-md) {
+    display: none;
+  }
+  
+  svg {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover {
+    background: var(--bg-secondary);
+    border-color: $primary-color;
+    transform: translateX(-4px) scale(1.05);
+    box-shadow: $shadow-lg;
+    
+    svg {
+      transform: translateX(-2px);
+    }
+  }
+  
+  &:active {
+    transform: translateX(-2px) scale(0.98);
+  }
+}
+
+.header {
+  @include container;
+  margin-bottom: $spacing-xl;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: $spacing-md;
+  color: var(--text-primary);
+  
+  @include responsive($breakpoint-md) {
+    font-size: 2rem;
+  }
+}
+
+.count {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.content {
+  @include container;
+}
+
+.placesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $spacing-xl;
+  
+  @include responsive($breakpoint-md) {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: $spacing-lg;
+  }
+  
+  @include responsive($breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: $spacing-2xl;
+  color: var(--text-secondary);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: $spacing-lg;
+}
+
+.emptyText {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: $spacing-md;
+  color: var(--text-primary);
+}
+
+.emptyHint {
+  font-size: 1rem;
+  opacity: 0.7;
+  max-width: 500px;
+  margin: 0 auto;
+}
+

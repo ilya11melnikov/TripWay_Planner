@@ -5,8 +5,9 @@ import { motion } from 'framer-motion';
 import styles from './PlaceCard.module.scss';
 
 const PlaceCard = ({ place, showCategory = false }) => {
-  const { toggleFavorite, isFavorite } = useTrip();
+  const { toggleFavorite, isFavorite, isInTrip } = useTrip();
   const favorite = isFavorite(place.xid);
+  const tripDay = isInTrip(place.xid);
 
   const handleFavoriteClick = (e) => {
     e.preventDefault();
@@ -48,6 +49,11 @@ const PlaceCard = ({ place, showCategory = false }) => {
           >
             {favorite ? '❤️' : '🤍'}
           </button>
+          {tripDay && (
+            <span className={styles.inTripBadge}>
+              📅 День {tripDay}
+            </span>
+          )}
           {place.wikipedia_extracts && (
             <span className={styles.category}>
               {place.kinds?.split(',')[0]?.replace(/_/g, ' ') || 'Place'}

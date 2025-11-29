@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useFetch } from '../../hooks/useFetch';
-import { searchPlaces, getNearbyPlaces } from '../../services/api';
+import { searchPlaces } from '../../services/api';
 import PlaceCard from '../../components/Cards/PlaceCard/PlaceCard';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import { motion } from 'framer-motion';

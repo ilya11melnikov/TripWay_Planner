@@ -15,13 +15,21 @@ const Home = () => {
   const categories = [
     { id: 'all', name: 'Все', icon: '🌍' },
     { id: 'cities', name: 'Города', icon: '🏙️' },
-    { id: 'hotels', name: 'Отели', icon: '🏨' },
-    { id: 'places', name: 'Места', icon: '📍' }
+    { id: 'places', name: 'Места', icon: '📍' },
+    { id: 'favorites', name: 'Избранное', icon: '❤️' }
   ];
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
-    navigate(`/search?category=${category}`);
+    if (category === 'favorites') {
+      navigate('/favorites');
+    } else if (category === 'places') {
+      navigate('/places');
+    } else if (category === 'cities') {
+      navigate('/cities');
+    } else {
+      navigate(`/search?category=${category}`);
+    }
   };
 
   return (

@@ -7,11 +7,18 @@
 	"main": "src/index.js",
 	"scripts": {
 		"start": "react-scripts start",
-		"build": "react-scripts build",
+		"build": "gulp build",
+		"build:react": "react-scripts build",
+		"gulp": "gulp",
+		"gulp:build": "gulp build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
-		"cleanup:indexhtml": "node ./scripts/cleanup_indexhtml.js",
-		"fetch:top500": "node ./scripts/fetch_top500.js"
+		"cleanup:indexhtml": "node ./helpers/scripts/cleanup_indexhtml.js",
+		"fetch:top500": "node ./helpers/scripts/fetch_top500.js"
+	},
+	"config": {
+		"srcDir": "src/",
+		"outputDir": "docs/"
 	},
 	"dependencies": {
 		"@fancyapps/ui": "^5.0.0",
@@ -22,12 +29,19 @@
 		"react-dnd-html5-backend": "^16.0.1",
 		"react-dom": "^18.2.0",
 		"react-router-dom": "^6.20.0",
-		"sass": "^1.69.5",
-		"swiper": "^11.0.5",
-		"axios": "^1.4.0"
+		"sass": "^1.69.5"
 	},
 	"devDependencies": {
-		"react-scripts": "5.0.1"
+		"react-scripts": "5.0.1",
+		"gulp": "^4.0.2",
+		"gulp-dart-sass": "^5.1.0",
+		"gulp-file-include": "^2.3.0",
+		"gulp-csso": "^4.0.3",
+		"gulp-concat": "^2.6.1",
+		"gulp-autoprefixer": "^8.0.0",
+		"browser-sync": "^2.29.3",
+		"gulp-terser": "^2.1.0",
+		"gulp-prettier": "^4.0.0"
 	},
 	"browserslist": {
 		"production": [

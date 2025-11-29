@@ -88,6 +88,34 @@ export const TripProvider = ({ children }) => {
     return favorites.some(f => f.xid === xid);
   };
 
+  const isInTrip = (xid) => {
+    for (const day in tripPlan) {
+      if (tripPlan[day].some(item => item.xid === xid)) {
+        return Number(day);
+      }
+    }
+    return null;
+  };
+
+  const clearTripPlan = () => {
+    setTripPlan({});
+  };
+
+  const getMaxDay = () => {
+    const days = Object.keys(tripPlan).map(Number);
+    return days.length > 0 ? Math.max(...days) : 0;
+  };
+
+  const addNewDay = () => {
+    const maxDay = getMaxDay();
+    const newDay = maxDay + 1;
+    setTripPlan(prev => ({
+      ...prev,
+      [newDay]: []
+    }));
+    return newDay;
+  };
+
   return (
     <TripContext.Provider value={{
       tripPlan,
@@ -97,6 +125,10 @@ export const TripProvider = ({ children }) => {
       moveItem,
       toggleFavorite,
       isFavorite,
+      isInTrip,
+      clearTripPlan,
+      getMaxDay,
+      addNewDay,
       setTripPlan
     }}>
       {children}

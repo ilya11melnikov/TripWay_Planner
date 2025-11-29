@@ -111,17 +111,27 @@
 }
 
 .themeToggle {
-  background: transparent;
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: $radius-md;
-  padding: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
   font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  @include flex-center;
+  width: 45px;
+  height: 45px;
+  min-width: 45px;
+  min-height: 45px;
   
   &:hover {
     background: var(--bg-secondary);
-    transform: rotate(15deg);
+    border-color: $primary-color;
+    transform: scale(1.05);
+  }
+  
+  &:active {
+    transform: scale(0.95);
   }
 }
 

@@ -2,12 +2,11 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { useTrip } from '../../context/TripContext';
-import SearchBar from '../SearchBar/SearchBar';
 import styles from './Header.module.scss';
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
-  const { tripPlan, favorites } = useTrip();
+  const { tripPlan } = useTrip();
   const location = useLocation();
   
   const tripItemsCount = Object.values(tripPlan).reduce((sum, day) => sum + day.length, 0);

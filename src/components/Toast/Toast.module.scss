@@ -1,0 +1,83 @@
+@import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
+
+.toast {
+  position: fixed;
+  top: 90px;
+  right: $spacing-lg;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  box-shadow: $shadow-lg;
+  z-index: 10000;
+  @include flex-center;
+  gap: $spacing-md;
+  min-width: 300px;
+  max-width: 500px;
+  backdrop-filter: blur(10px);
+  
+  @include responsive($breakpoint-md) {
+    right: $spacing-md;
+    left: $spacing-md;
+    min-width: auto;
+    max-width: none;
+  }
+}
+
+.success {
+  border-left: 4px solid $success-color;
+  
+  .icon {
+    color: $success-color;
+    background: rgba($success-color, 0.1);
+  }
+}
+
+.error {
+  border-left: 4px solid $error-color;
+  
+  .icon {
+    color: $error-color;
+    background: rgba($error-color, 0.1);
+  }
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  @include flex-center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.message {
+  flex: 1;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: $spacing-xs;
+  @include flex-center;
+  width: 24px;
+  height: 24px;
+  border-radius: $radius-sm;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  
+  &:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+}
+

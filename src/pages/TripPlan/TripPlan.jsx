@@ -1,14 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTrip } from '../../context/TripContext';
 import TripDayBlock from '../../components/Cards/TripDayBlock/TripDayBlock';
 import { motion } from 'framer-motion';
+import Toast from '../../components/Toast/Toast';
+import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog';
 import styles from './TripPlan.module.scss';
 
 const TripPlan = () => {
-  const { tripPlan } = useTrip();
+  const { tripPlan, clearTripPlan, addNewDay } = useTrip();
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
   
   const days = Object.keys(tripPlan).sort((a, b) => Number(a) - Number(b));
   const totalItems = Object.values(tripPlan).reduce((sum, day) => sum + day.length, 0);
+
+  const handleClearPlan = () => {
+    setConfirmDialogVisible(true);
+  };
+
+  const handleConfirmClear = () => {
+    clearTripPlan();
+    setToastMessage('План путешествия очищен');
+    setToastVisible(true);
+    setConfirmDialogVisible(false);
+  };
+
+  const handleCancelClear = () => {
+    setConfirmDialogVisible(false);
+  };
+
+  const handleAddDay = () => {
+    const newDay = addNewDay();
+    setToastMessage(`Добавлен день ${newDay}`);
+    setToastVisible(true);
+  };
 
   if (totalItems === 0) {
     return (
@@ -32,15 +58,45 @@ const TripPlan = () => {
 
   return (
     <div className={styles.tripPlan}>
+      <Toast
+        message={toastMessage}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+        type="success"
+      />
+      <ConfirmDialog
+        isVisible={confirmDialogVisible}
+        title="Очистить план путешествия?"
+        message="Вы уверены, что хотите очистить весь план путешествия? Это действие нельзя отменить."
+        confirmText="Очистить"
+        cancelText="Отмена"
+        onConfirm={handleConfirmClear}
+        onCancel={handleCancelClear}
+        type="danger"
+      />
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className={styles.header}
       >
-        <h1 className={styles.title}>Мой план путешествия</h1>
-        <p className={styles.subtitle}>
-          Всего мест: {totalItems} | Дней: {days.length}
-        </p>
+        <div className={styles.headerTop}>
+          <div>
+            <h1 className={styles.title}>Мой план путешествия</h1>
+            <p className={styles.subtitle}>
+              Всего мест: {totalItems} | Дней: {days.length}
+            </p>
+          </div>
+          <div className={styles.headerActions}>
+            <button onClick={handleAddDay} className={styles.addDayBtn}>
+              ➕ Добавить день
+            </button>
+            {totalItems > 0 && (
+              <button onClick={handleClearPlan} className={styles.clearBtn}>
+                🗑️ Очистить план
+              </button>
+            )}
+          </div>
+        </div>
       </motion.div>
 
       <div className={styles.daysContainer}>

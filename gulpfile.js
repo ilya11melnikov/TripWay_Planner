@@ -1,4 +1,6 @@
-const { src, dest, watch, parallel } = require('gulp');
+const { src, dest, watch, parallel, series } = require('gulp');
+const { exec } = require('child_process');
+const path = require('path');
 
 const sass = require('gulp-dart-sass'),
 	fileinclude = require('gulp-file-include'),
@@ -105,8 +107,28 @@ async function pretty() {
 		.pipe(dest('src'));
 }
 
+// ===== REACT BUILD =====
+function reactBuild(cb) {
+	// Устанавливаем BUILD_PATH в docs и запускаем react-scripts build
+	process.env.BUILD_PATH = 'docs';
+	const buildProcess = exec('npx react-scripts build', (error, stdout, stderr) => {
+		if (error) {
+			console.error(`Ошибка сборки: ${error}`);
+			return cb(error);
+		}
+		console.log(stdout);
+		if (stderr) console.error(stderr);
+		cb();
+	});
+	
+	buildProcess.stdout.pipe(process.stdout);
+	buildProcess.stderr.pipe(process.stderr);
+}
+
 // ===== EXPORT TASKS =====
 exports.format = pretty;
 exports.cssmin = stylesMin;
+exports.react = reactBuild;
 exports.default = parallel(html, styles, scripts, imageSync, watching, browsersync);
-exports.build = parallel(html, stylesMin, scripts, imageSync);
+exports.build = reactBuild; // Основная сборка через React
+exports.buildStatic = parallel(html, stylesMin, scripts, imageSync); // Статическая сборка (если нужна)

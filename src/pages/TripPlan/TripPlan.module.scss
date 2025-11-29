@@ -8,8 +8,31 @@
 
 .header {
   @include container;
-  text-align: center;
   margin-bottom: $spacing-2xl;
+}
+
+.headerTop {
+  @include flex-between;
+  align-items: flex-start;
+  gap: $spacing-xl;
+  flex-wrap: wrap;
+  
+  @include responsive($breakpoint-md) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.headerActions {
+  @include flex-center;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+  
+  @include responsive($breakpoint-md) {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .title {
@@ -29,6 +52,37 @@
   
   @include responsive($breakpoint-md) {
     font-size: 1rem;
+  }
+}
+
+.addDayBtn {
+  @include button-primary;
+  padding: $spacing-md $spacing-lg;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.clearBtn {
+  padding: $spacing-md $spacing-lg;
+  font-size: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: $radius-md;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  &:hover {
+    background: var(--bg-secondary);
+    border-color: $error-color;
+    color: $error-color;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+  
+  &:active {
+    transform: translateY(0);
   }
 }
 

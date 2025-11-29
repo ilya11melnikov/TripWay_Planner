@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useFetch } from '../../hooks/useFetch';
 import { getPlaceDetails } from '../../services/api';
 import { useTrip } from '../../context/TripContext';
 import { motion } from 'framer-motion';
+import Toast from '../../components/Toast/Toast';
 import styles from './Details.module.scss';
 
 const Details = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToTrip, toggleFavorite, isFavorite } = useTrip();
+  const { addToTrip, removeFromTrip, toggleFavorite, isFavorite, isInTrip, getMaxDay } = useTrip();
   const [selectedDay, setSelectedDay] = useState(1);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   const { data: place, loading, error } = useFetch(
     () => getPlaceDetails(id),
@@ -31,10 +34,37 @@ const Details = () => {
     }
   }, [place]);
 
+  // Обновляем selectedDay при загрузке места
+  useEffect(() => {
+    if (place) {
+      const existingDay = isInTrip(place.xid);
+      if (existingDay) {
+        setSelectedDay(existingDay);
+      } else {
+        const maxDay = getMaxDay();
+        setSelectedDay(maxDay > 0 ? maxDay + 1 : 1);
+      }
+    }
+  }, [place, isInTrip, getMaxDay]);
+
   const handleAddToTrip = () => {
     if (place) {
-      addToTrip(place, selectedDay);
-      alert(`Добавлено в план путешествия на день ${selectedDay}!`);
+      const existingDay = isInTrip(place.xid);
+      if (existingDay) {
+        // Если место уже в плане, перемещаем в выбранный день
+        if (existingDay !== selectedDay) {
+          // Удаляем из старого дня и добавляем в новый
+          removeFromTrip(place.xid, existingDay);
+          addToTrip(place, selectedDay);
+          setToastMessage(`Перемещено в день ${selectedDay}!`);
+        } else {
+          setToastMessage(`Место уже в плане на день ${selectedDay}!`);
+        }
+      } else {
+        addToTrip(place, selectedDay);
+        setToastMessage(`Добавлено в план путешествия на день ${selectedDay}!`);
+      }
+      setToastVisible(true);
     }
   };
 
@@ -79,12 +109,34 @@ const Details = () => {
 
   const images = getImages();
   const favorite = isFavorite(place.xid);
+  const tripDay = place ? isInTrip(place.xid) : null;
+  
+  // Генерируем список дней для select (до максимального + 5 дополнительных)
+  const maxDay = getMaxDay();
+  const availableDays = Array.from({ length: Math.max(10, maxDay + 5) }, (_, i) => i + 1);
 
   return (
     <div className={styles.details}>
-      <button className={styles.backBtn} onClick={() => navigate(-1)}>
-        ← Назад
+      <Toast
+        message={toastMessage}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+        type="success"
+      />
+      <button className={styles.backBtn} onClick={() => navigate(-1)} aria-label="Назад">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
       </button>
+      
+      {/* Breadcrumbs */}
+      <div className={styles.breadcrumbs}>
+        <Link to="/home">Главная</Link>
+        <span> / </span>
+        <Link to="/places">Места</Link>
+        <span> / </span>
+        <span>{place?.name || 'Загрузка...'}</span>
+      </div>
 
       <div className={styles.content}>
         <div className={styles.mainImage}>
@@ -158,39 +210,92 @@ const Details = () => {
             </div>
           )}
 
-          {place.point && (
-            <div className={styles.mapSection}>
-              <h3>Расположение на карте</h3>
-              <div className={styles.mapContainer}>
-                <iframe
-                  width="100%"
-                  height="400"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps/embed/v1/place?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'AIzaSyBFw0Qbyq9zTFTd-tUY6dE_M0vGzNL5KZY'}&q=${place.point.lat},${place.point.lon}&zoom=15`}
-                />
+          {place.point && (() => {
+            // Получаем API ключ из переменных окружения
+            const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || 'AIzaSyBeCD42Imf0ZnOvuzBh8EWwSsvJIciZDk0';
+            
+            // Обрабатываем разные форматы координат
+            let lat, lon;
+            if (place.point.lat !== undefined && place.point.lon !== undefined) {
+              // Формат: {lat: 48.8584, lon: 2.2945}
+              lat = place.point.lat;
+              lon = place.point.lon;
+            } else if (Array.isArray(place.point) && place.point.length >= 2) {
+              // Формат: [lon, lat] (GeoJSON формат)
+              lon = place.point[0];
+              lat = place.point[1];
+            } else {
+              return null;
+            }
+            
+            if (!lat || !lon || isNaN(lat) || isNaN(lon)) {
+              console.warn('Invalid coordinates:', place.point);
+              return null;
+            }
+            
+            // Правильный формат URL для Google Maps Embed API
+            // Формат: https://www.google.com/maps/embed/v1/place?key=API_KEY&q=lat,lon
+            const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${lat},${lon}&zoom=15`;
+            
+            return (
+              <div className={styles.mapSection}>
+                <h3>Расположение на карте</h3>
+                <div className={styles.mapContainer}>
+                  <iframe
+                    width="100%"
+                    height="400"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={mapUrl}
+                    title="Карта расположения"
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           <div className={styles.actions}>
-            <div className={styles.addToTrip}>
-              <label htmlFor="daySelect">Добавить в план (День):</label>
-              <select
-                id="daySelect"
-                value={selectedDay}
-                onChange={(e) => setSelectedDay(Number(e.target.value))}
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(day => (
-                  <option key={day} value={day}>День {day}</option>
-                ))}
-              </select>
-              <button onClick={handleAddToTrip} className={styles.addBtn}>
-                ➕ Добавить в план путешествия
-              </button>
-            </div>
+            {tripDay ? (
+              <div className={styles.inTripInfo}>
+                <div className={styles.inTripBadge}>
+                  <span className={styles.badgeIcon}>📅</span>
+                  <span>Уже в плане на день {tripDay}</span>
+                </div>
+                <div className={styles.addToTrip}>
+                  <label htmlFor="daySelect">Переместить в день:</label>
+                  <select
+                    id="daySelect"
+                    value={selectedDay}
+                    onChange={(e) => setSelectedDay(Number(e.target.value))}
+                  >
+                    {availableDays.map(day => (
+                      <option key={day} value={day}>День {day}</option>
+                    ))}
+                  </select>
+                  <button onClick={handleAddToTrip} className={styles.addBtn}>
+                    🔄 Переместить
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.addToTrip}>
+                <label htmlFor="daySelect">Добавить в план (День):</label>
+                <select
+                  id="daySelect"
+                  value={selectedDay}
+                  onChange={(e) => setSelectedDay(Number(e.target.value))}
+                >
+                  {availableDays.map(day => (
+                    <option key={day} value={day}>День {day}</option>
+                  ))}
+                </select>
+                <button onClick={handleAddToTrip} className={styles.addBtn}>
+                  ➕ Добавить в план путешествия
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
