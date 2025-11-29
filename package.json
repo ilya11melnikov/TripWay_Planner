@@ -4,6 +4,7 @@
 	"author": "Illia Melnykov",
 	"license": "ISC",
 	"description": "Web Service TripWay Planner - Travel planning application",
+	"homepage": "/",
 	"main": "src/index.js",
 	"scripts": {
 		"start": "react-scripts start",
@@ -41,7 +42,8 @@
 		"gulp-autoprefixer": "^8.0.0",
 		"browser-sync": "^2.29.3",
 		"gulp-terser": "^2.1.0",
-		"gulp-prettier": "^4.0.0"
+		"gulp-prettier": "^4.0.0",
+		"cross-env": "^7.0.3"
 	},
 	"browserslist": {
 		"production": [
