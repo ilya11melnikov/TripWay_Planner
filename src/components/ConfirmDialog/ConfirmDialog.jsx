@@ -14,8 +14,17 @@ const ConfirmDialog = ({
 }) => {
   useEffect(() => {
     if (isVisible) {
-      // Блокируем прокрутку фона
+      // Сохраняем текущую позицию прокрутки
+      const scrollY = window.scrollY;
+      
+      // Блокируем прокрутку фона (для всех устройств)
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      
+      // Также блокируем на html для надежности
+      document.documentElement.style.overflow = 'hidden';
       
       // Закрытие по Escape
       const handleEscape = (e) => {
@@ -27,7 +36,16 @@ const ConfirmDialog = ({
       document.addEventListener('keydown', handleEscape);
       
       return () => {
-        document.body.style.overflow = 'unset';
+        // Восстанавливаем прокрутку
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.documentElement.style.overflow = '';
+        
+        // Восстанавливаем позицию прокрутки
+        window.scrollTo(0, scrollY);
+        
         document.removeEventListener('keydown', handleEscape);
       };
     }

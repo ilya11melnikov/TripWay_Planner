@@ -13,16 +13,17 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <div className={styles.container}>
-        <Link to="/home" className={styles.logo}>
+      {/* Desktop: однострочный хедер */}
+      <div className={styles.desktopContainer}>
+        <Link to="/" className={styles.logo}>
           <span className={styles.logoIcon}>✈️</span>
           <span className={styles.logoText}>TripWay Planner</span>
         </Link>
 
         <nav className={styles.nav}>
           <Link 
-            to="/home" 
-            className={`${styles.navLink} ${location.pathname === '/home' ? styles.active : ''}`}
+            to="/" 
+            className={`${styles.navLink} ${(location.pathname === '/' || location.pathname === '/home') ? styles.active : ''}`}
           >
             Главная
           </Link>
@@ -34,7 +35,7 @@ const Header = () => {
           </Link>
           <Link 
             to="/trip" 
-            className={`${styles.navLink} ${location.pathname === '/trip' ? styles.active : ''}`}
+            className={`${styles.navLink} ${styles.tripLink} ${location.pathname === '/trip' ? styles.active : ''}`}
           >
             Мой маршрут
             {tripItemsCount > 0 && (
@@ -53,7 +54,54 @@ const Header = () => {
           </button>
         </div>
       </div>
-      
+
+      {/* Mobile: двухрядный хедер */}
+      <div className={styles.mobileTopRow}>
+        <div className={styles.container}>
+          <Link to="/" className={styles.logo}>
+            <span className={styles.logoIcon}>✈️</span>
+            <span className={styles.logoText}>TripWay Planner</span>
+          </Link>
+
+          <div className={styles.actions}>
+            <button 
+              className={styles.themeToggle}
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+            >
+              {theme === 'light' ? '🌙' : '☀️'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.mobileBottomRow}>
+        <div className={styles.container}>
+          <nav className={styles.nav}>
+            <Link 
+              to="/" 
+              className={`${styles.navLink} ${(location.pathname === '/' || location.pathname === '/home') ? styles.active : ''}`}
+            >
+              Главная
+            </Link>
+            <Link 
+              to="/search" 
+              className={`${styles.navLink} ${location.pathname === '/search' ? styles.active : ''}`}
+            >
+              Поиск
+            </Link>
+            <Link 
+              to="/trip" 
+              className={`${styles.navLink} ${styles.tripLink} ${location.pathname === '/trip' ? styles.active : ''}`}
+            >
+              Мой маршрут
+              {tripItemsCount > 0 && (
+                <span className={styles.badge}>{tripItemsCount}</span>
+              )}
+            </Link>
+          </nav>
+        </div>
+      </div>
     </header>
   );
 };

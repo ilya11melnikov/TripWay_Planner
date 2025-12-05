@@ -10,6 +10,8 @@
 		"start": "react-scripts start",
 		"build": "gulp build",
 		"build:react": "react-scripts build",
+		"serve": "gulp serve",
+		"build:serve": "gulp buildAndServe",
 		"gulp": "gulp",
 		"gulp:build": "gulp build",
 		"test": "react-scripts test",

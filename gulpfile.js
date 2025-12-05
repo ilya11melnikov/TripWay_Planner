@@ -309,6 +309,83 @@ function cleanupIndexHtml(cb) {
 	cleanupScript.stderr.pipe(process.stderr);
 }
 
+// ===== UPDATE INDEX.HTML FOR LOCAL SERVER =====
+// Обновляет пути в index.html - оставляем абсолютные пути, browser-sync их обработает
+function updateIndexHtmlForLocal(cb) {
+	// На самом деле, для browser-sync с startPath абсолютные пути работают правильно
+	// Поэтому просто проверяем, что файл существует
+	const indexPath = path.join(cfg.outputDir, 'index.html');
+	
+	if (!fs.existsSync(indexPath)) {
+		console.warn('index.html not found, skipping local update');
+		return cb();
+	}
+	
+	console.log('Index.html ready for local server (using absolute paths with startPath)');
+	cb();
+}
+
+// ===== RESTORE INDEX.HTML FOR GITHUB PAGES =====
+// Восстанавливает абсолютные пути для GitHub Pages
+function restoreIndexHtmlForGitHub(cb) {
+	const indexPath = path.join(cfg.outputDir, 'index.html');
+	
+	if (!fs.existsSync(indexPath)) {
+		return cb();
+	}
+	
+	// Читаем homepage из package.json
+	const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+	const homepage = packageJson.homepage || '/';
+	const basePath = homepage.endsWith('/') ? homepage : homepage + '/';
+	
+	let html = fs.readFileSync(indexPath, 'utf8');
+	
+	// Восстанавливаем абсолютные пути для GitHub Pages
+	html = html.replace(/href="\.\//g, `href="${basePath}`);
+	html = html.replace(/src="\.\//g, `src="${basePath}`);
+	
+	fs.writeFileSync(indexPath, html, 'utf8');
+	console.log('Restored index.html with absolute paths for GitHub Pages');
+	cb();
+}
+
+// ===== SERVE DOCS =====
+// Запускает локальный сервер для тестирования собранного проекта
+function serveDocs(cb) {
+	// Читаем homepage из package.json для правильного startPath
+	const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+	const homepage = packageJson.homepage || '/';
+	const startPath = homepage === '/' ? '/' : homepage;
+	const basePath = homepage === '/' ? '' : homepage.replace(/\/$/, '');
+	
+	browserSync.init({
+		server: {
+			baseDir: cfg.outputDir,
+			middleware: [
+				// Middleware для обработки SPA роутинга и переписывания путей
+				(req, res, next) => {
+					// Переписываем пути с basePath на корень (например, /TripWay_Planner/css/main.css -> /css/main.css)
+					if (basePath && req.url.startsWith(basePath)) {
+						req.url = req.url.replace(basePath, '');
+					}
+					// Если запрос к корню или без расширения, возвращаем index.html
+					if (req.url === '/' || (req.url.indexOf('.') === -1 && !req.url.startsWith('/static'))) {
+						req.url = '/index.html';
+					}
+					next();
+				}
+			]
+		},
+		port: 3001, // Используем другой порт, чтобы не конфликтовать с react-scripts start
+		open: true, // Автоматически открывает браузер
+		notify: false, // Отключаем уведомления
+		startPath: startPath, // Открываем с правильным путем для basename
+	});
+	// browser-sync не требует callback, но для совместимости с series
+	if (cb) cb();
+}
+
 // ===== EXPORT TASKS =====
 exports.format = pretty;
 exports.cssmin = stylesMin;
@@ -316,6 +393,10 @@ exports.react = reactBuild;
 exports.combineCSS = combineCSS;
 exports.combineJS = combineJS;
 exports.updateIndex = updateIndexHtml;
+exports.serve = series(updateIndexHtmlForLocal, serveDocs); // Запуск сервера для docs (с обновлением путей)
+exports.serveOnly = serveDocs; // Только запуск сервера без обновления путей
+exports.updateLocal = updateIndexHtmlForLocal; // Обновление путей для локального сервера
+exports.restoreGitHub = restoreIndexHtmlForGitHub; // Восстановление путей для GitHub Pages
 exports.default = parallel(html, styles, scripts, imageSync, watching, browsersync);
 // Основная сборка: React -> объединение CSS/JS -> обновление index.html -> создание 404.html -> очистка
 exports.build = series(
@@ -325,5 +406,16 @@ exports.build = series(
 	create404Html,
 	removeStatic,
 	cleanupIndexHtml
+);
+// Сборка + запуск сервера
+exports.buildAndServe = series(
+	reactBuild, 
+	parallel(combineCSS, combineJS, copyImages),
+	updateIndexHtml,
+	create404Html,
+	removeStatic,
+	cleanupIndexHtml,
+	updateIndexHtmlForLocal, // Обновляем пути для локального сервера
+	serveDocs
 );
 exports.buildStatic = parallel(html, stylesMin, scripts, imageSync); // Статическая сборка (если нужна)

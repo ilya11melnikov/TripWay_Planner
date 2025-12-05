@@ -16,15 +16,56 @@
   justify-content: center;
 }
 
-.container {
+// Desktop: однострочный хедер
+.desktopContainer {
   @include container;
   @include flex-between;
+  align-items: center;
   padding-top: $spacing-md;
   padding-bottom: $spacing-md;
   gap: $spacing-lg;
+  display: none;
+  
+  @media (min-width: $breakpoint-md + 1px) {
+    display: flex;
+  }
+}
+
+// Mobile: двухрядный хедер
+.mobileTopRow {
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid var(--border);
+  display: block;
+  
+  @media (min-width: $breakpoint-md + 1px) {
+    display: none;
+  }
   
   @include responsive($breakpoint-md) {
-    flex-wrap: wrap;
+    padding: $spacing-xs 0;
+  }
+}
+
+.mobileBottomRow {
+  padding: $spacing-sm 0;
+  display: block;
+  
+  @media (min-width: $breakpoint-md + 1px) {
+    display: none;
+  }
+  
+  @include responsive($breakpoint-md) {
+    padding: 0.7rem 0;
+  }
+}
+
+.container {
+  @include container;
+  @include flex-between;
+  align-items: center;
+  gap: $spacing-lg;
+  
+  @include responsive($breakpoint-md) {
     gap: $spacing-md;
   }
 }
@@ -36,6 +77,11 @@
   font-weight: 700;
   color: $primary-color;
   cursor: pointer;
+  align-items: center;
+  
+  @include responsive($breakpoint-md) {
+    font-size: 1.125rem;
+  }
   
   &:hover {
     opacity: 0.8;
@@ -44,6 +90,10 @@
 
 .logoIcon {
   font-size: 2rem;
+  
+  @include responsive($breakpoint-md) {
+    font-size: 1.5rem;
+  }
 }
 
 .logoText {
@@ -57,10 +107,9 @@
   gap: $spacing-lg;
   flex: 1;
   justify-content: center;
+  width: 100%;
   
   @include responsive($breakpoint-md) {
-    order: 3;
-    width: 100%;
     gap: $spacing-md;
   }
 }
@@ -73,6 +122,15 @@
   transition: color 0.3s ease;
   @include flex-center;
   gap: $spacing-sm;
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  
+  @include responsive($breakpoint-md) {
+    padding: $spacing-xs $spacing-sm;
+    font-size: 0.875rem;
+    flex: 1;
+    justify-content: center;
+  }
   
   &:hover {
     color: var(--text-primary);
@@ -90,6 +148,21 @@
       width: 80%;
       height: 2px;
       background: $primary-color;
+      
+      @include responsive($breakpoint-md) {
+        bottom: -$spacing-sm;
+        width: 60%;
+      }
+    }
+  }
+  
+  // Больше места для "Мой маршрут" чтобы поместилось все в одну строку
+  &.tripLink {
+    padding-right: $spacing-lg;
+    min-width: fit-content;
+    
+    @include responsive($breakpoint-md) {
+      padding-right: $spacing-md;
     }
   }
 }
@@ -100,9 +173,12 @@
   border-radius: 50%;
   width: 20px;
   height: 20px;
+  min-width: 20px;
   @include flex-center;
   font-size: 0.75rem;
   font-weight: 600;
+  flex-shrink: 0;
+  margin-left: $spacing-xs;
 }
 
 .actions {
@@ -123,6 +199,15 @@
   height: 45px;
   min-width: 45px;
   min-height: 45px;
+  
+  @include responsive($breakpoint-md) {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    font-size: 1.25rem;
+    padding: 0;
+  }
   
   &:hover {
     background: var(--bg-secondary);
